@@ -1,14 +1,28 @@
-import board._
+import Board._
+import Cell._
+import Winner._
+
+import scala.annotation.tailrec
+
+
+package object Game {
+  @tailrec
+  def gameLoop(board: Board, state: CellState): Unit = {
+    show(board)
+    println(state + "! Your next move?")
+    val col = scala.io.StdIn.readInt() - 1
+
+    val newBoard = Board.play(board, state, col)
+
+    winner(newBoard) match {
+      case NoWinner => gameLoop(newBoard, flip(state))
+      case w => {show(newBoard); println(w)}
+    }
+  }
+}
 
 object Main extends App {
-  println("hello world!")
+  var b: Board = Board.createEmpty()
 
-  var b: Board = Array(Array('.', '.', '.', '.', '.', '.'), Array('.', '.', '.', '.', '.', '.'),
-    Array('.', '.', '.', '.', '.', '.'), Array('.', '.', '.', '.', '.', '.'),
-    Array('.', '.', '.', '.', '.', '.'), Array('.', '.', '.', '.', '.', '.'))
-
-
-  b(2)(1) = 'o'
-
-  show(b)
+  Game.gameLoop(b, O)
 }
